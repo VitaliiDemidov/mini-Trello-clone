@@ -13,10 +13,11 @@ const Note = {
             noteEl.removeAttribute('contenteditable')
             noteEl.setAttribute('draggable', true)
             noteEl.closest('.column').setAttribute('draggable', true)
-
+            Application.save()
             if (!noteEl.textContent.trim().length) {
                 noteEl.remove()
             }
+
         })
 
         noteEl.addEventListener('dragstart', Note.dragstart)
@@ -26,33 +27,57 @@ const Note = {
         noteEl.addEventListener('dragleave', Note.dragleave)
         noteEl.addEventListener('drop', Note.drop)
     },
+
+    create(id = null, content = '') {
+        const noteElem = document.createElement('div')
+        noteElem.classList.add('note')
+        noteElem.setAttribute('draggable', true)
+        noteElem.textContent = content
+        if (id) {
+            noteElem.setAttribute('data-note-id', id)
+        } else {
+            noteElem.setAttribute('data-note-id', Column.idCounter)
+            Note.idCounter++
+        }
+
+
+        Note.process(noteElem)
+
+        return noteElem
+
+    },
+
     dragstart(e) {
         Note.dragged = this
         this.classList.add('dragged')
         e.stopPropagation()
     },
     dragend(e) {
-
+        e.stopPropagation()
         Note.dragged = null
         this.classList.remove('dragged')
         document.querySelectorAll('.note')
             .forEach(el => el.classList.remove('under'))
+        Application.save()
+
     },
     dragenter(e) {
-        if (this === Note.dragged) {
+        e.preventDefault()
+        if (!Note.dragged || this === Note.dragged) {
             return
         }
         this.classList.add('under')
     },
     dragover(e) {
         e.preventDefault()
-        if (this === Note.dragged) {
+        if (!Note.dragged || this === Note.dragged) {
             return
         }
 
     },
     dragleave(e) {
-        if (this === Note.dragged) {
+        e.stopPropagation()
+        if (!Note.dragged || this === Note.dragged) {
             return
         }
         this.classList.remove('under')
@@ -60,7 +85,7 @@ const Note = {
     },
     drop(e) {
         e.stopPropagation()
-        if (this === Note.dragged) {
+        if (!Note.dragged || this === Note.dragged) {
             return
         }
 
