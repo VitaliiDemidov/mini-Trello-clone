@@ -21,7 +21,6 @@ document.querySelector('[data-action-addColumn]')
         columnIdCounter++
         document.querySelector('.columns').append(columnElement)
         columnProcess(columnElement)
-        columnElement.setAttribute('contenteditable', true)
     })
 
 document.querySelectorAll('.note')
@@ -32,15 +31,17 @@ function columnProcess(elem) {
 
     spanAddNote.addEventListener('click', function (e) {
         const noteElem = document.createElement('div')
-        noteElem.focus()
         noteElem.classList.add('note')
         noteElem.setAttribute('draggable', true)
         noteElem.setAttribute('data-note-id', Note.idCounter)
-        noteElem.focus()
+
         Note.idCounter++
 
         elem.querySelector('[data-notes]').append(noteElem)
         Note.process(noteElem)
+        noteElem.setAttribute('contenteditable', true)
+        noteElem.focus()
+
 
     })
     const headerEl = elem.querySelector('.column-header')
