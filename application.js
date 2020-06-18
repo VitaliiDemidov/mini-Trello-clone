@@ -14,9 +14,19 @@ const Application = {
         document.querySelectorAll('.column')
             .forEach(element => {
                 const column = {
+                    // title: [],
                     id: +element.getAttribute('data-column-id'),
                     noteId: []
                 }
+                // document.querySelectorAll('.column-header')
+                // .forEach(noteElement => {
+                //     const note = {
+                //         id: +noteElement.getAttribute('data-note-id'),
+                //         content: noteElement.textContent
+                //     }
+                //     obj.notes.items.push(note)
+                // })
+
                 element.querySelectorAll('.note')
                     .forEach(noteElement => {
                         column.noteId.push(parseInt(noteElement.getAttribute('data-note-id')))
@@ -27,14 +37,12 @@ const Application = {
         document.querySelectorAll('.note')
             .forEach(noteElement => {
                 const note = {
-                    title,
                     id: +noteElement.getAttribute('data-note-id'),
                     content: noteElement.textContent
                 }
                 obj.notes.items.push(note)
             })
         const json = JSON.stringify(obj)
-        console.log(json);
         localStorage.setItem('trello', json)
     },
     load() {
@@ -53,7 +61,6 @@ const Application = {
             mountPoint.append(columnElement)
             for (let noteId of column.noteId) {
                 const note = getNoteById(noteId)
-                console.log(note);
                 const noteElement = Note.create(note.id, note.content)
                 columnElement.querySelector('[data-notes]').append(noteElement)
             }

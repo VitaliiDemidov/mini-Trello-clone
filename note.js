@@ -1,3 +1,10 @@
+// class Note{
+//     constructor(){
+
+//     }
+// }
+
+
 const Note = {
     idCounter: 8,
     dragged: null,
@@ -13,11 +20,11 @@ const Note = {
             noteEl.removeAttribute('contenteditable')
             noteEl.setAttribute('draggable', true)
             noteEl.closest('.column').setAttribute('draggable', true)
-            Application.save()
+
             if (!noteEl.textContent.trim().length) {
                 noteEl.remove()
             }
-
+            Application.save()
         })
 
         noteEl.addEventListener('dragstart', Note.dragstart)
@@ -36,7 +43,7 @@ const Note = {
         if (id) {
             noteElem.setAttribute('data-note-id', id)
         } else {
-            noteElem.setAttribute('data-note-id', Column.idCounter)
+            noteElem.setAttribute('data-note-id', Note.idCounter)
             Note.idCounter++
         }
 

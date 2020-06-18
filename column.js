@@ -10,8 +10,9 @@ const Column = {
         if (id) {
             columnElement.setAttribute('data-column-id', id)
         } else {
-            columnElement.setAttribute('data-column-id', Column.idCounter)
             Column.idCounter++
+            columnElement.setAttribute('data-column-id', Column.idCounter)
+
         }
 
         columnElement.classList.add('column')
@@ -71,6 +72,8 @@ const Column = {
         Column.dragged = null
         Column.droped = null
         this.classList.remove('dragged')
+        document.querySelectorAll('.note')
+            .forEach(noteElem => noteElem.setAttribute('draggable', true))
         Application.save()
     },
 
