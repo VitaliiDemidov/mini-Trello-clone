@@ -103,4 +103,3 @@ class Note {
 Note.idCounter = (new Date()).getMilliseconds() + Math.floor(Math.random() * 1000)
 Note.dragged = null
 
-console.log(Note.idCounter)

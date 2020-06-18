@@ -10,7 +10,6 @@ const Application = {
                 items: []
             }
         }
-
         document.querySelectorAll('.column')
             .forEach(columnElement => {
                 const column = {
@@ -45,7 +44,6 @@ const Application = {
 
         const object = JSON.parse(localStorage.getItem('trello'))
         const getNoteById = id => object.notes.items.find(note => note.id === id)
-        console.log(object);
 
         for (let { id, noteIds, title } of object.columns.items) {
             let column = new Column(id, title)
@@ -54,8 +52,7 @@ const Application = {
             for (let noteId of noteIds) {
                 const { id, content } = getNoteById(noteId)
                 const note = new Note(id, content)
-                // column.add(note.element)
-                column.element.querySelector('[data-notes]').append(note.element)
+                column.add(note)
             }
         }
 
