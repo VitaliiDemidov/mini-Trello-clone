@@ -12,24 +12,15 @@ const Application = {
         }
 
         document.querySelectorAll('.column')
-            .forEach(element => {
+            .forEach(columnElement => {
                 const column = {
-                    // title: [],
-                    id: +element.getAttribute('data-column-id'),
-                    noteId: []
+                    title: columnElement.querySelector('.column-header').textContent,
+                    id: +columnElement.getAttribute('data-column-id'),
+                    noteIds: []
                 }
-                // document.querySelectorAll('.column-header')
-                // .forEach(noteElement => {
-                //     const note = {
-                //         id: +noteElement.getAttribute('data-note-id'),
-                //         content: noteElement.textContent
-                //     }
-                //     obj.notes.items.push(note)
-                // })
-
-                element.querySelectorAll('.note')
+                columnElement.querySelectorAll('.note')
                     .forEach(noteElement => {
-                        column.noteId.push(parseInt(noteElement.getAttribute('data-note-id')))
+                        column.noteIds.push(parseInt(noteElement.getAttribute('data-note-id')))
                     })
 
                 obj.columns.items.push(column)
@@ -56,13 +47,15 @@ const Application = {
         const getNoteById = id => object.notes.items.find(note => note.id === id)
         console.log(object);
 
-        for (let column of object.columns.items) {
-            let columnElement = Column.create(column.id)
-            mountPoint.append(columnElement)
-            for (let noteId of column.noteId) {
-                const note = getNoteById(noteId)
-                const noteElement = Note.create(note.id, note.content)
-                columnElement.querySelector('[data-notes]').append(noteElement)
+        for (let { id, noteIds, title } of object.columns.items) {
+            let column = new Column(id, title)
+            mountPoint.append(column.element)
+
+            for (let noteId of noteIds) {
+                const { id, content } = getNoteById(noteId)
+                const note = new Note(id, content)
+                // column.add(note.element)
+                column.element.querySelector('[data-notes]').append(note.element)
             }
         }
 

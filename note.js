@@ -1,114 +1,106 @@
-// class Note{
-//     constructor(){
+class Note {
+    constructor(id = null, content = '') {
+        const instance = this
+        const element = this.element = document.createElement('div')
+        element.classList.add('note')
+        element.setAttribute('draggable', true)
+        element.textContent = content
 
-//     }
-// }
+        if (id) {
+            element.setAttribute('data-note-id', id)
+        } else {
+            element.setAttribute('data-note-id', Note.idCounter)
+            Note.idCounter += Note.idCounter + 1
+        }
+        element.addEventListener('dblclick', function (e) {
 
-
-const Note = {
-    idCounter: 8,
-    dragged: null,
-    process(noteEl) {
-        noteEl.addEventListener('dblclick', function (e) {
-
-            noteEl.setAttribute('contenteditable', true)
-            noteEl.removeAttribute('draggable')
-            noteEl.closest('.column').removeAttribute('draggable')
-            noteEl.focus()
+            element.setAttribute('contenteditable', true)
+            element.removeAttribute('draggable')
+            instance.column.removeAttribute('draggable')
+            element.focus()
         })
-        noteEl.addEventListener('blur', function (e) {
-            noteEl.removeAttribute('contenteditable')
-            noteEl.setAttribute('draggable', true)
-            noteEl.closest('.column').setAttribute('draggable', true)
+        element.addEventListener('blur', function (e) {
+            element.removeAttribute('contenteditable')
+            element.setAttribute('draggable', true)
+            instance.column.setAttribute('draggable', true)
 
-            if (!noteEl.textContent.trim().length) {
-                noteEl.remove()
+            if (!element.textContent.trim().length) {
+                element.remove()
             }
             Application.save()
         })
 
-        noteEl.addEventListener('dragstart', Note.dragstart)
-        noteEl.addEventListener('dragend', Note.dragend)
-        noteEl.addEventListener('dragenter', Note.dragenter)
-        noteEl.addEventListener('dragover', Note.dragover)
-        noteEl.addEventListener('dragleave', Note.dragleave)
-        noteEl.addEventListener('drop', Note.drop)
-    },
+        element.addEventListener('dragstart', this.dragstart.bind(this))
+        element.addEventListener('dragend', this.dragend.bind(this))
+        element.addEventListener('dragenter', this.dragenter.bind(this))
+        element.addEventListener('dragover', this.dragover.bind(this))
+        element.addEventListener('dragleave', this.dragleave.bind(this))
+        element.addEventListener('drop', this.drop.bind(this))
 
-    create(id = null, content = '') {
-        const noteElem = document.createElement('div')
-        noteElem.classList.add('note')
-        noteElem.setAttribute('draggable', true)
-        noteElem.textContent = content
-        if (id) {
-            noteElem.setAttribute('data-note-id', id)
-        } else {
-            noteElem.setAttribute('data-note-id', Note.idCounter)
-            Note.idCounter++
-        }
-
-
-        Note.process(noteElem)
-
-        return noteElem
-
-    },
+    }
+    get column() {
+        return this.element.closest('.column')
+    }
 
     dragstart(e) {
-        Note.dragged = this
-        this.classList.add('dragged')
+        Note.dragged = this.element
+        this.element.classList.add('dragged')
         e.stopPropagation()
-    },
+    }
     dragend(e) {
         e.stopPropagation()
         Note.dragged = null
-        this.classList.remove('dragged')
+        this.element.classList.remove('dragged')
         document.querySelectorAll('.note')
             .forEach(el => el.classList.remove('under'))
         Application.save()
 
-    },
+    }
     dragenter(e) {
         e.preventDefault()
-        if (!Note.dragged || this === Note.dragged) {
+        if (!Note.dragged || this.element === Note.dragged) {
             return
         }
-        this.classList.add('under')
-    },
+        this.element.classList.add('under')
+    }
     dragover(e) {
         e.preventDefault()
-        if (!Note.dragged || this === Note.dragged) {
+        e.stopPropagation()
+        if (!Note.dragged || this.element === Note.dragged) {
             return
         }
 
-    },
+    }
     dragleave(e) {
         e.stopPropagation()
-        if (!Note.dragged || this === Note.dragged) {
+        if (!Note.dragged || this.element === Note.dragged) {
             return
         }
-        this.classList.remove('under')
+        this.element.classList.remove('under')
 
-    },
+    }
     drop(e) {
         e.stopPropagation()
-        if (!Note.dragged || this === Note.dragged) {
+        if (!Note.dragged || this.element === Note.dragged) {
             return
         }
 
-        if (this.parentElement === Note.dragged.parentElement) {
-            const note = Array.from(this.parentElement.querySelectorAll('.note'))
-            const indexA = note.indexOf(this)
+        if (this.element.parentElement === Note.dragged.parentElement) {
+            const note = Array.from(this.element.parentElement.querySelectorAll('.note'))
+            const indexA = note.indexOf(this.element)
             const indexB = note.indexOf(Note.dragged)
             if (indexA < indexB) {
-                this.parentElement.insertBefore(Note.dragged, this)
+                this.element.parentElement.insertBefore(Note.dragged, this.element)
             } else {
-                this.parentElement.insertBefore(Note.dragged, this.nextElementSibling)
+                this.element.parentElement.insertBefore(Note.dragged, this.element.nextElementSibling)
             }
         } else {
-            this.parentElement.insertBefore(Note.dragged, this)
+            this.element.parentElement.insertBefore(Note.dragged, this.element)
         }
     }
 }
 
+Note.idCounter = (new Date()).getMilliseconds() + Math.floor(Math.random() * 1000)
+Note.dragged = null
 
+console.log(Note.idCounter)
